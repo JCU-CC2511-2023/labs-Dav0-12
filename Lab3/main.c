@@ -29,29 +29,29 @@ int main(void) {
   gpio_set_dir(BLUE_LED, true);
 
   bool status;
-  int32_t pointer;
+  int32_t index;
 
   while (true) {
     int32_t ch = getchar_timeout_us(0);
     if(ch != PICO_ERROR_TIMEOUT) {
       // reset values
       status = false;
-      pointer = 0;
+      index = 0;
 
       switch(ch) 
       {
         case 'r': // r pressed, meaning red
-        pointer = RED_LED;
+        index = RED_LED;
         printf("Toggle Red\r\n");
         break;
 
         case 'g': // g pressed, meaning green
-        pointer = GREEN_LED;
+        index = GREEN_LED;
         printf("Toggle Green\r\n");
         break;
 
         case 'b': // b pressed, meaning blue
-        pointer = BLUE_LED;
+        index = BLUE_LED;
         printf("Toggle Blue\r\n");
         break;
 
@@ -59,9 +59,9 @@ int main(void) {
         printf("Unrecognised Character\r\n");
       }
       // check current state of light
-      bool status = gpio_get(pointer); // returns true if light is on
+      bool status = gpio_get(index); // returns true if light is on
       
-      gpio_put(pointer, !status);
+      gpio_put(index, !status);
     }
     sleep_ms(20);
   }
