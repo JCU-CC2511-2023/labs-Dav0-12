@@ -43,6 +43,6 @@ int main(void) {
   }
 }
 
-/*This is a simple function which checks whether a button is pressed, then turns on the corresponding LED. 
+/*This is a simple programme which checks whether a button is pressed, then turns on the corresponding LED. 
   Multiple buttons can be pressed at the same time to create different colour combinations. If no buttons
   are pressed then the RGB LED will be off */

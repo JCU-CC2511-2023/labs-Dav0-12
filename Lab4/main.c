@@ -29,9 +29,9 @@
 typedef unsigned long uint_32t;
 
 // SETUP WAIT FUNCTION
-void wait()
+void wait(uint_32t wait_length)
 {
-  for (uint_32t i = 0; i < 8000000; i++) // ARBITRARY DELAY VALUE
+  for (uint_32t i = 0; i < wait_length; i++) // ARBITRARY DELAY VALUE
   { 
     __asm volatile("nop");
   }
@@ -39,16 +39,18 @@ void wait()
 
 int main(void)
 {
+  uint_32t wait_length = 8000000;
+
   // INITIALISE
-  CONTENT_OF(REG_PAD_CONTROL) = VAL_IE_OD;      // SETUP PAD CONTROL. INPUT AND OUTPUT ENABLED
+  CONTENT_OF(REG_PAD_CONTROL) = CONTENT_OF(REG_PAD_CONTROL) | VAL_IE_OD; // SETUP PAD CONTROL. INPUT AND OUTPUT ENABLED
   CONTENT_OF(REG_GPIO25_CTRL) = FUNCTION_5_SET; // SETS THE SIO FUNCTION
   CONTENT_OF(REG_GPIO_OE_SET) = TOGGLE_GPIO25;  // SETS THE PIN AS OUTPUT
 
   while (true)
   {
     CONTENT_OF(REG_GPIO_OUT_SET) = TOGGLE_GPIO25; // SETS THE GPIO25 PIN TO ON
-    wait();
+    wait(wait_length);
     CONTENT_OF(REG_GPIO_OUT_CLR) = TOGGLE_GPIO25; // SETS THE GPIO25 PIN TO OFF
-    wait();
+    wait(wait_length);
   }
 }
