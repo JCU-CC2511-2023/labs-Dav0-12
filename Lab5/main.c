@@ -46,20 +46,20 @@ int main(void) {
   gpio_set_function(RED_LED, GPIO_FUNC_PWM); //sets the function to pwm
   gpio_set_function(GREEN_LED, GPIO_FUNC_PWM);
 
-  uint32_t red_led_slice_num = pwm_gpio_to_slice_num(RED_LED); // gets the slice number associated with the gpio pin
-  uint32_t green_led_slice_num = pwm_gpio_to_slice_num(GREEN_LED);
-
-  pwm_set_wrap(red_led_slice_num, 255); // sets the period of the slice to 256
-  pwm_set_wrap(green_led_slice_num, 255);
-
-  pwm_set_enabled(red_led_slice_num, true); // enables the pwm
-  pwm_set_enabled(green_led_slice_num, true);
-
   uint8_t red_level = 0;
   uint8_t green_level = 0;
 
-  uint8_t upper_limit = 20;
+  uint8_t upper_limit = 20; //upper_limit plus one is the number of steps from 0-100% duty rate
   uint8_t lower_limit = 0;
+
+  uint32_t red_led_slice_num = pwm_gpio_to_slice_num(RED_LED); // gets the slice number associated with the gpio pin
+  uint32_t green_led_slice_num = pwm_gpio_to_slice_num(GREEN_LED);
+
+  pwm_set_wrap(red_led_slice_num, upper_limit); // sets the period of the slice to the upper limit
+  pwm_set_wrap(green_led_slice_num, upper_limit);
+
+  pwm_set_enabled(red_led_slice_num, true); // enables the pwm
+  pwm_set_enabled(green_led_slice_num, true);
 
   while (true) {
 
@@ -119,8 +119,8 @@ int main(void) {
     sleep_ms(20); //small delay
 
     // set pwm pin levels
-    pwm_set_gpio_level(RED_LED, red_level*red_level);
-    pwm_set_gpio_level(GREEN_LED, green_level*green_level);
+    pwm_set_gpio_level(RED_LED, red_level);
+    pwm_set_gpio_level(GREEN_LED, green_level);
 
   }
 }
