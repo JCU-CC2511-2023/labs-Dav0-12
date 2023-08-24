@@ -11,11 +11,14 @@
 #include <stdio.h>
 #include "hardware/pwm.h"
 
-// pin definitions
+// definitions
 #define FLOATING_PIN 15
 #define RED_LED 11
 #define GREEN_LED 12
 #define BLUE_LED 13
+#define UPPER_LIM 254
+#define LOWER_LIM 0
+#define STEP_VAL 2
 
 // macro definitions
 #define CONTENT_OF(addr) (*(volatile uint32_t*)addr)
@@ -49,14 +52,11 @@ int main(void) {
   uint8_t red_level = 0;
   uint8_t green_level = 0;
 
-  uint8_t upper_limit = 20; //upper_limit plus one is the number of steps from 0-100% duty rate
-  uint8_t lower_limit = 0;
-
   uint32_t red_led_slice_num = pwm_gpio_to_slice_num(RED_LED); // gets the slice number associated with the gpio pin
   uint32_t green_led_slice_num = pwm_gpio_to_slice_num(GREEN_LED);
 
-  pwm_set_wrap(red_led_slice_num, upper_limit); // sets the period of the slice to the upper limit
-  pwm_set_wrap(green_led_slice_num, upper_limit);
+  pwm_set_wrap(red_led_slice_num, UPPER_LIM); // sets the period of the slice
+  pwm_set_wrap(green_led_slice_num, UPPER_LIM);
 
   pwm_set_enabled(red_led_slice_num, true); // enables the pwm
   pwm_set_enabled(green_led_slice_num, true);
@@ -86,26 +86,30 @@ int main(void) {
         break;
 
         case 'r': // up red brightness
-          if(red_level < upper_limit){
-            red_level++;
+          if(red_level < UPPER_LIM){
+            red_level += STEP_VAL;
+            printf("red brightness is at %d\r\n", red_level);
           }
         break;
 
         case 'R': // down red brightness
-          if(red_level > lower_limit){
-            red_level--;
+          if(red_level > LOWER_LIM){
+            red_level -= STEP_VAL;
+            printf("red brightness is at %d\r\n", red_level);
           }
         break;
 
         case 'g': // up green brightness
-          if(green_level < upper_limit){
-            green_level++;
+          if(green_level < UPPER_LIM){
+            green_level += STEP_VAL;
+            printf("green brightness is at %d\r\n", green_level);
           }
         break;
 
         case 'G': // down green brightness
-          if(green_level > lower_limit) {
-            green_level--;
+          if(green_level > LOWER_LIM) {
+            green_level -= STEP_VAL;
+            printf("green brightness is at %d\r\n", green_level);
           }
         break;
 
