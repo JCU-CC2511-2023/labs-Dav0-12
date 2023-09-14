@@ -35,7 +35,7 @@ int main(void) {
 
       switch(ch) 
       {
-        case 'r': // r pressed, meaning right
+        case 'r': // r pressed, meaning rsight
         gpio_put(DIR, true);
         printf("Direction set to Right\r\n");
         break;
