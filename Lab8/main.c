@@ -10,9 +10,13 @@
 #include "hardware/uart.h"
 #include "hardware/adc.h"
 
-#define LIGHT_SENSOR_PIN 0
+#define LIGHT_SENSOR_PIN 26
 #define VREF_LEVEL 3.3
-#define LED_PIN 1
+#define RED_PIN 11
+#define GREEN_PIN 12
+#define BLUE_PIN 13
+#define VOLTAGE_CONVERSION (3.3f / (1 << 12))
+#define VOLTAGE_TO_LIGHT_RATIO (255/3.3)
 
 int main(void) {
   stdio_init_all();
@@ -20,17 +24,42 @@ int main(void) {
   adc_gpio_init(LIGHT_SENSOR_PIN);
   adc_select_input(0);
 
-  gpio_init(LED_PIN);
-  gpio_set_dir(LED_PIN, GPIO_OUT);
-  gpio_set_function(LED_PIN, GPIO_FUNC_PWM);
-  pwm_set_enabled(pwm_gpio_to_slice_num(LED_PIN), true); // enables the pwm
+  gpio_init(RED_PIN);
+  gpio_init(GREEN_PIN);
+  gpio_init(BLUE_PIN);
 
+  gpio_set_dir(RED_PIN, GPIO_OUT);
+  gpio_set_dir(GREEN_PIN, GPIO_OUT);
+  gpio_set_dir(BLUE_PIN, GPIO_OUT);
+
+  gpio_set_function(RED_PIN, GPIO_FUNC_PWM);
+  gpio_set_function(GREEN_PIN, GPIO_FUNC_PWM);
+  gpio_set_function(BLUE_PIN, GPIO_FUNC_PWM);
+
+  pwm_set_wrap(pwm_gpio_to_slice_num(RED_PIN), 255);
+  pwm_set_wrap(pwm_gpio_to_slice_num(GREEN_PIN), 255);
+  pwm_set_wrap(pwm_gpio_to_slice_num(BLUE_PIN), 255);
+
+  pwm_set_enabled(pwm_gpio_to_slice_num(RED_PIN), true); // enables the pwm
+  pwm_set_enabled(pwm_gpio_to_slice_num(GREEN_PIN), true); 
+  pwm_set_enabled(pwm_gpio_to_slice_num(BLUE_PIN), true); 
 
   while (true) {
     uint16_t result = adc_read();
-    sleep_ms(500);
-    
-    
+    uint16_t light_ratio = result * VOLTAGE_CONVERSION * VOLTAGE_TO_LIGHT_RATIO;
+    // float sensor_voltage = result * VOLTAGE_CONVERSION;
 
+    // if (light_ratio < 0) {
+    //   light_ratio = 0;
+    // } else if (light_ratio > 255) {
+    //   light_ratio = 255;
+    // }
+
+    //printf("Raw value: %u, voltage: %f, pwm value: %u\r\n", result, sensor_voltage, light_ratio);
+
+    // pwm_set_gpio_level(RED_PIN, light_ratio);
+    // pwm_set_gpio_level(GREEN_PIN, light_ratio);
+    pwm_set_gpio_level(BLUE_PIN, light_ratio);
+    sleep_ms(20);
   }
 }
