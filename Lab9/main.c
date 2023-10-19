@@ -19,13 +19,13 @@
 #define LED_MASK (1 << RED_LED | 1 << GREEN_LED | 1 << BLUE_LED)
 
 //TRANSMISSION DEFINITIONS
-#define IDLE_TIME 500
+#define IDLE_TIME 50
 #define TIME_0 400
 #define TIME_1 600
 
 //ADC DEFINITIONS
 #define VOLTAGE_CONVERSION (3.3f / (1 << 12))
-#define EDGE_TOLERANCE 300
+#define EDGE_TOLERANCE 150
 
 int main(void) {
   stdio_init_all();
@@ -47,11 +47,14 @@ int main(void) {
   int16_t current_sensor_reading;
   volatile int pulse_width_timer;
   bool timing;
+  uint8_t mode; //0 is flashing code, 1 is light detection code
 
   while(true) {
+    mode = 1;
+    if (mode == 0) {
     //flashing code
-    //light_flash(IDLE_TIME);
-
+    light_flash(IDLE_TIME);
+    } else {
     //light detection code
     // current_sensor_reading = adc_read();
     // if((current_sensor_reading - previous_sensor_reading) >= EDGE_TOLERANCE){
@@ -64,18 +67,21 @@ int main(void) {
     // previous_sensor_reading = current_sensor_reading;
     // sleep_ms(30);
 
-    current_sensor_reading = adc_read();
-    if ((current_sensor_reading - previous_sensor_reading) >= EDGE_TOLERANCE) {
+      current_sensor_reading = adc_read();
+      if ((current_sensor_reading - previous_sensor_reading) >= EDGE_TOLERANCE) {
         timing = true;
         pulse_width_timer = 0;
-    } else if ((previous_sensor_reading - current_sensor_reading) >= EDGE_TOLERANCE){
-        printf("Pulse Width: %d ms\r\n", pulse_width_timer);
+      } else if ((previous_sensor_reading - current_sensor_reading) >= EDGE_TOLERANCE){
         timing = false; 
-    } else if (timing){
+        printf("Pulse Width: %d ms\r\n", pulse_width_timer);
+      } 
+
+      if (timing){
         sleep_ms(1);
         pulse_width_timer++;
+      }
+      previous_sensor_reading = current_sensor_reading;
     }
-    previous_sensor_reading = current_sensor_reading;
   }
 }
 
