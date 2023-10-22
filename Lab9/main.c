@@ -52,35 +52,23 @@ int main(void) {
   while(true) {
     mode = 1; //0 is flashing code, 1 is light detection code
     if (mode == 0) {
+
       //flashing code
       light_flash(IDLE_TIME);
+
     } else {
+
       //light detection code
-      // current_sensor_reading = adc_read();
-      // if((current_sensor_reading - previous_sensor_reading) >= EDGE_TOLERANCE){
-      //   rising_edge_time = get_absolute_time();
-      // } else if((previous_sensor_reading - current_sensor_reading) >= EDGE_TOLERANCE) {
-      //   falling_edge_time = get_absolute_time();
-      //   pulse_width_time_ms = ((absolute_time_diff_us(rising_edge_time, falling_edge_time))/1000);
-      //   printf("Pulse Width: %d ms\r\n", pulse_width_time_ms);
-      // }
-      // previous_sensor_reading = current_sensor_reading;
-      // sleep_ms(30);
-
       current_sensor_reading = adc_read();
-      if ((current_sensor_reading - previous_sensor_reading) >= EDGE_TOLERANCE) {
-        timing = true;
-        pulse_width_timer = 0;
-      } else if ((previous_sensor_reading - current_sensor_reading) >= EDGE_TOLERANCE){
-        timing = false; 
-        printf("Pulse Width: %d ms\r\n", pulse_width_timer);
-      } 
-
-      if (timing){
-        sleep_ms(1);
-        pulse_width_timer++;
+      if((current_sensor_reading - previous_sensor_reading) >= EDGE_TOLERANCE){
+        rising_edge_time = get_absolute_time();
+      } else if((previous_sensor_reading - current_sensor_reading) >= EDGE_TOLERANCE) {
+        falling_edge_time = get_absolute_time();
+        pulse_width_time_ms = ((absolute_time_diff_us(rising_edge_time, falling_edge_time))/1000);
+        printf("Pulse Width: %d ms\r\n", pulse_width_time_ms);
       }
       previous_sensor_reading = current_sensor_reading;
+
     }
   }
 }
