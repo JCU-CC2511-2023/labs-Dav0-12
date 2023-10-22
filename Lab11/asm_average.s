@@ -14,10 +14,8 @@ asm_average:
     */
     push    {r4-r7, lr}
 
-    movs r2, #1
+    movs r2, #4
     lsls r2, r0
-    movs r3, #4
-    muls r2, r3
 
     movs r5, #0
     movs r4, #0
@@ -26,13 +24,13 @@ asm_average:
         subs r2, #4
         ldr r6, [r1, r2]
         adds r5, r6
-        bvs overflow_loop
+        bcs carry_loop
         check:
         cmp r2, #0
         bne sum_loop
         b division
 
-    overflow_loop:
+    carry_loop:
     adds r4, #1
     b check
 
