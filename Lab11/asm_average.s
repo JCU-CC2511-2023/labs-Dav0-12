@@ -16,23 +16,27 @@ asm_average:
 
     movs r2, #1
     lsls r2, r0
+    movs r3, #4
+    muls r2, r3
 
     movs r5, #0
     movs r4, #0
 
     sum_loop:
-        subs r2, #1
+        subs r2, #4
         ldr r6, [r1, r2]
         adds r5, r6
         bvs overflow_loop
         check:
         cmp r2, #0
         bne sum_loop
+        b division
 
     overflow_loop:
     adds r4, #1
     b check
 
+    division:
     /* TODO - put the result into r0 */
     movs r6, #32
     subs r6, r0
